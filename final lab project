@@ -9,20 +9,19 @@ int main() {
     if (file == NULL) {
         printf("File doesn't exist.\n");
     }
-    char line[MAX_LINE];
-    char regions[MAX_REGIONS][50];
+    char line[MAX_LINE], regions[MAX_REGIONS][50];
     double amounts[MAX_REGIONS] = {0};
     int regionCount = 0;
     fgets(line, MAX_LINE, file);
     while (fgets(line, MAX_LINE, file)) {
         char *token = strtok(line, ",");
-        //strtok() is a function used tosplit (tokenize) a string into smaller segments based on a given delimiter, in this case, a comma ','.
+        //strtok() is a function used tokenize a string into smaller segments based on a given delimiter, in this case, a comma ','.
         token = strtok(NULL, ",");
         if (token == NULL)
             continue;
         char region[50];
         strcpy(region, token);
-        strtok(NULL, ",");  strtok(NULL, ","); // Skip Payment and Amount Source
+      strtok(NULL, ",");    strtok(NULL, ",");
         token = strtok(NULL, ",");
         if (token == NULL)
             continue;
@@ -45,10 +44,11 @@ int main() {
     fclose(file);
     double totalSum = 0.0;
     printf("%-12s %12s\n", "Region", "Sum Amount  ");
-    for (int i = 0; i < regionCount; i++) {
-        printf("%-12s $%.2f\n", regions[i], amounts[i]);  
+    int i;
+    for ( i = 0; i < regionCount; i++) {
+        printf("%-12s $%.2f\n", regions[i], amounts[i]);
         totalSum =totalSum + amounts[i];
     }
-    printf("%-12s $%.2f\n", "\nTotal Amount ", totalSum);
+    printf("%-12s $%.2f\n", "\nTotal Amount ",totalSum);
     return 0;
 }
