@@ -1,5 +1,5 @@
 #include <stdio.h>
-#include <stdlib.h>  //Without including stdlib.h, the compiler will not recognize atof()[source online]
+#include <stdlib.h>
 #include <string.h>
 #define MAX_REGIONS 1000
 #define MAX_LINE 1000
@@ -15,7 +15,6 @@ int main() {
     fgets(line, MAX_LINE, file);
     while (fgets(line, MAX_LINE, file)) {
         char *token = strtok(line, ",");
-        //strtok() is a function used tokenize a string into smaller segments based on a given delimiter, in this case, a comma ','.
         token = strtok(NULL, ",");
         if (token == NULL)
             continue;
@@ -46,7 +45,6 @@ int main() {
     printf("%s\t     %s\n", "Region", "Sum Amount");
     int i;
     for ( i = 0; i < regionCount; i++) {
-       // printf("%-12s $%.2f\n", regions[i], amounts[i]);
       printf("%s     $%.2f\n", regions[i], amounts[i]);
         totalSum =totalSum + amounts[i];
     }
