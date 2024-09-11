@@ -1,0 +1,125 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#define MAX_REGIONS 1000
+#define MAX_PAYMENTS 1000
+#define MAX_SOURCES 1000
+#define MAX_LINE 1000
+int main() {
+    FILE *file;
+    file = fopen("sales_data.csv", "r");
+    if (file == NULL) {
+        printf("File doesn't exist.\n");
+    }
+    char line[MAX_LINE];
+    char regions[MAX_REGIONS][50], payments[MAX_PAYMENTS][50], sources[MAX_SOURCES][50];
+    double regionAmounts[MAX_REGIONS] = {0},paymentAmounts[MAX_PAYMENTS] = {0},sourceAmounts[MAX_SOURCES] = {0};
+    int regionCustCount[MAX_REGIONS] = {0},paymentCustCount[MAX_PAYMENTS] = {0},regionCount = 0, paymentCount = 0, sourceCount = 0;
+    fgets(line, MAX_LINE, file);
+    while (fgets(line, MAX_LINE, file)) {
+        char *token = strtok(line, ",");
+        token = strtok(NULL, ",");
+        char region[50];
+        strcpy(region, token);
+        token = strtok(NULL, ",");
+        char payment[50];
+        strcpy(payment, token);
+        token = strtok(NULL, ",");
+        char source[50];
+        strcpy(source, token);
+        token = strtok(NULL, ",");
+        char *amountStr = token + 1;
+        double amount = atof(amountStr);
+        int i, found = 0;
+        for (i = 0; i < regionCount; i++) {
+            if (strcmp(regions[i], region) == 0) {
+                regionAmounts[i] += amount;
+                regionCustCount[i]++;
+                found = 1;
+                break;
+            }
+        }
+        if (found == NULL) {
+            strcpy(regions[regionCount], region);
+            regionAmounts[regionCount] = amount;
+            regionCustCount[regionCount] = 1;
+            regionCount++;
+        }
+        found = 0;
+        for (i = 0; i < paymentCount; i++) {
+            if (strcmp(payments[i], payment) == 0) {
+                paymentAmounts[i] += amount;
+                paymentCustCount[i]++;
+                found = 1;
+                break;
+            }
+        }
+        if (found == NULL) {
+            strcpy(payments[paymentCount], payment);
+            paymentAmounts[paymentCount] = amount;
+            paymentCustCount[paymentCount] = 1;
+            paymentCount++;
+        }
+        found = 0;
+        for (i = 0; i < sourceCount; i++) {
+            if (strcmp(sources[i], source) == 0) {
+                sourceAmounts[i] += amount;
+                found = 1;
+                break;
+            }
+        }
+        if (found == NULL) {
+            strcpy(sources[sourceCount], source);
+            sourceAmounts[sourceCount] = amount;
+            sourceCount++;
+        }
+    }
+
+    fclose(file);
+    // summary by Region (Count + Sum Amount)
+    double totalRegionSum = 0.0;
+    int totalCustCount = 0;
+    printf("Region\tCount  Cust ID\tSum Amount\n");
+    int i;
+    for (i = 0; i < regionCount; i++) {
+        printf("%s\t%d\t\t$%.2f\n", regions[i], regionCustCount[i], regionAmounts[i]);
+        totalRegionSum += regionAmounts[i];
+        totalCustCount += regionCustCount[i];
+    }
+    printf("Total Result: %d\t$%.2f\n\n", totalCustCount, totalRegionSum);
+    //  summary by Payment (Count + Sum Amount)
+    double totalPaymentSum = 0.0;
+    totalCustCount = 0;
+    printf("Payment\tCount   Cust ID\tSum Amount\n");
+    for (i = 0; i < paymentCount; i++) {
+        printf("%s\t%d\t\t$%.2f\n", payments[i], paymentCustCount[i], paymentAmounts[i]);
+        totalPaymentSum += paymentAmounts[i];
+        totalCustCount += paymentCustCount[i];
+    }
+    printf("Total Result: %d\t$%.2f\n\n", totalCustCount, totalPaymentSum);
+    // summary by Source (Sum Amount)
+    double totalSourceSum = 0.0;
+    printf("Source\tSum Amount\n");
+    for (i = 0; i < sourceCount; i++) {
+        printf("%s\t$%.2f\n", sources[i], sourceAmounts[i]);
+        totalSourceSum += sourceAmounts[i];
+    }
+    printf("Total Result: $%.2f\n\n", totalSourceSum);
+    // customer count by Region
+    printf("Region\tCount - Cust ID\n");
+    totalCustCount = 0;
+    for (i = 0; i < regionCount; i++) {
+        printf("%s\t%d\n", regions[i], regionCustCount[i]);
+        totalCustCount += regionCustCount[i];
+    }
+    printf("Total Result: %d\n\n", totalCustCount);
+    // customer count by Payment
+    printf("Payment\tCount - Cust ID\n");
+    totalCustCount = 0;
+    for (i = 0; i < paymentCount; i++) {
+        printf("%s\t%d\n", payments[i], paymentCustCount[i]);
+        totalCustCount += paymentCustCount[i];
+    }
+    printf("Total Result: %d\n", totalCustCount);
+    return 0;
+}
